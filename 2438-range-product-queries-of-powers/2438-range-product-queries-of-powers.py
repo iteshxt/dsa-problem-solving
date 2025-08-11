@@ -1,19 +1,18 @@
-MOD = 10**9 + 7
-
 class Solution:
     def productQueries(self, n: int, queries: List[List[int]]) -> List[int]:
-
-        powers = []
-        bit = 0
-        while n > 0:
-            if n & 1:
-                powers.append(pow(2, bit, MOD))
-            bit += 1
-            n >>= 1
-        prefix = [1]
-        for p in powers:
-            prefix.append((prefix[-1] * p) % MOD)
+        mod = int(1e9) + 7
+        s = (bin(n)[2:])[::-1]
+        arr = []
+        print(s)
+        for x in range(len(s)):
+            if s[x] == "1":
+                if not arr:
+                    arr.append(2**x)
+                else:
+                    arr.append((2**x) * arr[-1])
+        print(arr)
         ans = []
-        for l, r in queries:
-            ans.append((prefix[r+1] * pow(prefix[l], MOD-2, MOD)) % MOD)
+        for q in queries:
+            temp_ans = arr[q[1]] // (arr[q[0]-1] if q[0] > 0 else 1)
+            ans.append(temp_ans % mod)
         return ans
