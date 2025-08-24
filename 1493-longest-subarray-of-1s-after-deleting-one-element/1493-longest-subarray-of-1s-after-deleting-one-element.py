@@ -8,11 +8,11 @@ class Solution:
             if nums[right] == 0:
                 zero_count += 1
 
-            while zero_count > 1:  # shrink window
+            while zero_count > 1:
                 if nums[left] == 0:
                     zero_count -= 1
                 left += 1
 
-            res = max(res, right - left)  # window size - 1 deleted element
+            res = max(res, right - left) 
 
         return res
