@@ -1,33 +1,32 @@
 class Solution:
-    def solveSudoku(self, board: list[list[str]]) -> None:
-        def is_valid(r, c, ch):
-            # check row
-            for i in range(9):
-                if board[r][i] == ch:
-                    return False
-            # check column
-            for i in range(9):
-                if board[i][c] == ch:
-                    return False
-            # check 3x3 box
-            box_r, box_c = (r // 3) * 3, (c // 3) * 3
-            for i in range(box_r, box_r + 3):
-                for j in range(box_c, box_c + 3):
-                    if board[i][j] == ch:
-                        return False
-            return True
+    def solveSudoku(self, board: List[List[str]]) -> None:
+        rows = [[0] * 10 for _ in range(9)]
+        cols = [[0] * 10 for _ in range(9)]
+        boxes = [[0] * 10 for _ in range(9)]
+        empties = []
 
-        def backtrack():
-            for r in range(9):
-                for c in range(9):
-                    if board[r][c] == '.':
-                        for ch in map(str, range(1, 10)):
-                            if is_valid(r, c, ch):
-                                board[r][c] = ch
-                                if backtrack():
-                                    return True
-                                board[r][c] = '.'  # backtrack
-                        return False  # no valid digit → fail
-            return True  # solved
+        # Pre-fill
+        for i in range(9):
+            for j in range(9):
+                if board[i][j] == ".":
+                    empties.append((i, j))
+                else:
+                    d = int(board[i][j])
+                    rows[i][d] = cols[j][d] = boxes[(i // 3) * 3 + j // 3][d] = 1
 
-        backtrack()
+        def backtrack(k):
+            if k == len(empties):
+                return True
+            i, j = empties[k]
+            b = (i // 3) * 3 + j // 3
+            for d in range(1, 10):
+                if not rows[i][d] and not cols[j][d] and not boxes[b][d]:
+                    board[i][j] = str(d)
+                    rows[i][d] = cols[j][d] = boxes[b][d] = 1
+                    if backtrack(k + 1):
+                        return True
+                    board[i][j] = "."
+                    rows[i][d] = cols[j][d] = boxes[b][d] = 0
+            return False
+
+        backtrack(0)
