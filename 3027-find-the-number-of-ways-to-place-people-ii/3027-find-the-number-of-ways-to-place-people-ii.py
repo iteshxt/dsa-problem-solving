@@ -1,25 +1,21 @@
 class Solution:
     def numberOfPairs(self, points: List[List[int]]) -> int:
+        # Step 1: Sort points by x ascending, then by y descending
+        points.sort(key=lambda x: (x[0], -x[1]))
+        pair_count = 0
         n = len(points)
-        ans = 0
 
+        # Step 2: Iterate through all points as potential "upper-left" points
         for i in range(n):
-            for j in range(i + 1, n):
-                x1, y1 = points[i]
-                x2, y2 = points[j]
-                valid = True
-                for k in range(n):
-                    if k == i or k == j:
-                        continue
-                    x3, y3 = points[k]
+            upper_y = points[i][1]
+            lower_y_limit = float('-inf')
 
-                    # collinearity check
-                    if (y2 - y1) * (x3 - x1) == (y3 - y1) * (x2 - x1):
-                        # inside segment?
-                        if min(x1, x2) <= x3 <= max(x1, x2) and \
-                           min(y1, y2) <= y3 <= max(y1, y2):
-                            valid = False
-                            break
-                if valid:
-                    ans += 1
-        return ans
+            # Step 3: Check subsequent points as potential "bottom-right" points
+            for j in range(i + 1, n):
+                current_y = points[j][1]
+                if current_y <= upper_y and current_y > lower_y_limit:
+                    pair_count += 1
+                    lower_y_limit = current_y
+                    if current_y == upper_y:
+                        break
+        return pair_count
