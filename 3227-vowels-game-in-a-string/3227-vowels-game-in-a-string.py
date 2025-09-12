@@ -1,6 +1,3 @@
-class Solution:
-    def doesAliceWin(self, s: str) -> bool:
-        for c in s:
-            if (0x104111 >> (ord(c) - 97)) & 1:
-                return True
-        return False
+class Solution(object):
+    def doesAliceWin(self, s):
+        return any(c in "aeiou" for c in s)
