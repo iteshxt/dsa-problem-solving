@@ -1,8 +1,11 @@
-class Solution:
+class Solution(object):
     def canBeTypedWords(self, text: str, brokenLetters: str) -> int:
-        bad = set(brokenLetters)
-        cnt = 0
-        for w in text.split():
-            if not (set(w) & bad):
-                cnt += 1
-        return cnt
+        l = text.split()
+        count = 0
+        for i in l:
+            for j in brokenLetters:
+                if j in i:
+                    break
+            else:
+                count += 1
+        return count
