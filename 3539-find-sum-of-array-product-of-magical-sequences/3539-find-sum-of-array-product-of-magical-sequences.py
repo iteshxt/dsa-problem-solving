@@ -1,22 +1,26 @@
+MOD = 10**9 + 7
+from functools import lru_cache
+import math
+from typing import List
+
 class Solution:
-    def magicalSum(self, m: int, k: int, nums: list[int]) -> int:
-        MOD = 10**9 + 7
-        n = len(nums)
-        dp = [0] * (1 << n)
-        for i in range(n):
-            dp[1 << i] = nums[i]
-        for _ in range(m - 1):
-            new_dp = [0] * (1 << n)
-            for mask in range(1 << n):
-                if dp[mask] == 0:
-                    continue
-                for i in range(n):
-                    new_mask = mask + (1 << i)
-                    if new_mask < (1 << n):
-                        new_dp[new_mask] = (new_dp[new_mask] + dp[mask] * nums[i]) % MOD
-            dp = new_dp
-        ans = 0
-        for mask in range(1 << n):
-            if bin(mask).count('1') == k:
-                ans = (ans + dp[mask]) % MOD
-        return ans
+    def magicalSum(self, total_count: int, target_odd: int, numbers: List[int]) -> int:
+        
+        @lru_cache(None)
+        def dfs(remaining, odd_needed, index, carry):
+            if remaining < 0 or odd_needed < 0 or remaining + carry.bit_count() < odd_needed:
+                return 0
+            if remaining == 0:
+                return 1 if odd_needed == carry.bit_count() else 0
+            if index >= len(numbers):
+                return 0
+            
+            ans = 0
+            for take in range(remaining + 1):
+                ways = math.comb(remaining, take) * pow(numbers[index], take, MOD) % MOD
+                new_carry = carry + take
+                ans += ways * dfs(remaining - take, odd_needed - (new_carry % 2), index + 1, new_carry // 2)
+                ans %= MOD
+            return ans
+        
+        return dfs(total_count, target_odd, 0, 0)
