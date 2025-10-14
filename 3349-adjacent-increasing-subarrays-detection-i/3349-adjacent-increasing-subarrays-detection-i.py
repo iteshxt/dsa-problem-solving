@@ -1,15 +1,15 @@
 class Solution:
     def hasIncreasingSubarrays(self, nums: List[int], k: int) -> bool:
-        n = len(nums)
-        count = 1
-        for i in range(1, n):
+        inc = 1
+        prevInc = 0
+        maxLen = 0
+        for i in range(1, len(nums)):
             if nums[i] > nums[i - 1]:
-                count += 1
+                inc += 1
             else:
-                count = 1
-            if count >= k * 2:
-                return True
-        for i in range(n - k):
-            if all(nums[j] < nums[j + 1] for j in range(i, i + k - 1)) and all(nums[j] < nums[j + 1] for j in range(i + k, i + 2 * k - 1)):
+                prevInc = inc
+                inc = 1
+            maxLen = max(maxLen, max(inc >> 1, min(prevInc, inc)))
+            if maxLen >= k:
                 return True
         return False
