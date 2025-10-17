@@ -1,21 +1,29 @@
+from functools import cache
+
 class Solution:
-  def maxPartitionsAfterOperations(self, s: str, k: int) -> int:
-    @functools.lru_cache(None)
-    def dp(i: int, canChange: bool, mask: int) -> int:
-      if i == len(s):
-        return 0
+    def maxPartitionsAfterOperations(self, s: str, k: int) -> int:
+        n = len(s)
+        masks = [1 << (ord(c) - ord('a')) for c in s]
 
-      def getRes(newBit: int, nextCanChange: bool) -> int:
-        newMask = mask | newBit
-        if newMask.bit_count() > k:
-          return 1 + dp(i + 1, nextCanChange, newBit)
-        return dp(i + 1, nextCanChange, newMask)
+        @cache
+        def dp(i, can_change, mask):
+            if i == n:
+                return 0
+            new_mask = mask | masks[i]
+            res = 0
 
-      res = getRes(1 << (ord(s[i]) - ord('a')), canChange)
+            if new_mask.bit_count() > k:
+                res = 1 + dp(i + 1, can_change, masks[i])
+            else:
+                res = dp(i + 1, can_change, new_mask)
 
-      if canChange:
-        for j in range(26):
-          res = max(res, getRes(1 << j, False))
-      return res
+            if can_change:
+                for j in range(26):
+                    changed_mask = mask | (1 << j)
+                    if changed_mask.bit_count() > k:
+                        res = max(res, 1 + dp(i + 1, 0, 1 << j))
+                    else:
+                        res = max(res, dp(i + 1, 0, changed_mask))
+            return res
 
-    return dp(0, True, 0) + 1
+        return dp(0, 1, 0) + 1
