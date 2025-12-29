@@ -5,7 +5,7 @@ class Solution:
             tab[u, v].add(w)
 
         def add_neighbor(node):
-            res = ['']
+            res = [""]
             for i in range(1, len(node)):
                 eles = tab[(node[i - 1], node[i])]
                 if eles:
@@ -13,8 +13,7 @@ class Solution:
                 else:
                     return []
             return res
-        
-        
+
         visited = set()
 
         def dfs(node):
